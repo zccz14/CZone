@@ -1,3 +1,4 @@
+var $ = require('jquery');
 var React = require('react');
 
 var AppBar = require('material-ui/lib/app-bar');
@@ -11,14 +12,36 @@ var CardText = require('material-ui/lib/card/card-text');
 
 var GridList = require('material-ui/lib/grid-list/grid-list');
 var GridTile = require('material-ui/lib/grid-list/grid-tile');
+var IconButton = require('material-ui/lib/icon-button');
+var FontIcon = require('material-ui/lib/font-icon');
+var MarkdownBox = require('./markdown-box.jsx');
 
 module.exports = React.createClass({
     displayName : "Home",
+    getInitialState : function(){
+        return {
+            self : '',
+        }
+    },
+    componentDidMount : function(){
+        $.get('self.md',function(data){
+            this.setState({
+                self : data,
+            });
+        }.bind(this));
+    },
     render : function(){
         return (
             <div>
                 <AppBar 
                     title="出雲理樹"
+                    iconElementRight={
+                        <IconButton>
+                            <a href="https://github.com/zccz14/CZone">
+                                <FontIcon className="muidocs-icon-custom-github" color="white"></FontIcon>
+                            </a>
+                        </IconButton>
+                    }
                 />
                 <Tabs>
                     <Tab label="献给本命">
@@ -32,7 +55,7 @@ module.exports = React.createClass({
                             <img src="http://img4.duitang.com/uploads/item/201407/23/20140723181040_F8vac.jpeg" alt=""/>
                         </CardMedia>
                     </Tab>
-                    <Tab label="关于りき君">
+                    <Tab label="关于我">
                         <GridList cols={12}>
                             <GridTile cols={4} rows={2}>
                                 <div style={{
@@ -41,18 +64,17 @@ module.exports = React.createClass({
                                     justifyContent : 'center',
                                     alignItems : 'center',
                                 }}>
+                                    <Paper circle={true} style={{overflow : 'hidden'}} zDepth={3}>
                                     <img src="http://media.steampowered.com/steamcommunity/public/images/avatars/82/82c43d9a38cbfb5722d6459f3a60448d7cf3444d_full.jpg" alt=""/>
+                                    </Paper>
                                 </div>
                             </GridTile>
                             <GridTile cols={8} rows={2}>
-                                <h1>出雲理樹（いずも　りき）</h1>
-                                <p>罗马音: <span>Izumo Riki</span></p>
-                                <p>英文名: <span>Heley Chen</span></p>
-                                <p>在校本科生程序猿, Web App 前后端 攻城狮</p>
-                                <h2>擅长</h2>
-                                <p>JavaScript</p>
-                                <h2>属性</h2>
-                                <p>ロリコン</p>
+                                <MarkdownBox>
+                                    {
+                                        this.state.self
+                                    }
+                                </MarkdownBox>
                             </GridTile>
                         </GridList>
                         <div style={{width : '40%'}}>
