@@ -14,13 +14,18 @@ var GridList = require('material-ui/lib/grid-list/grid-list');
 var GridTile = require('material-ui/lib/grid-list/grid-tile');
 var IconButton = require('material-ui/lib/icon-button');
 var FontIcon = require('material-ui/lib/font-icon');
+var FloatingActionButton = require('material-ui/lib/floating-action-button');
+
+
 var MarkdownBox = require('./markdown-box.jsx');
+var PostCard = require('./post-card.jsx');
 
 module.exports = React.createClass({
     displayName : "Home",
     getInitialState : function(){
         return {
             self : '',
+            posts : [],
         }
     },
     componentDidMount : function(){
@@ -28,6 +33,13 @@ module.exports = React.createClass({
             this.setState({
                 self : data,
             });
+        }.bind(this));
+        $.get('post',function(data){
+            
+            console.log(data.body);
+            this.setState({
+                posts : data.body.reverse(),
+            })
         }.bind(this));
     },
     render : function(){
@@ -55,8 +67,8 @@ module.exports = React.createClass({
                             <img src="http://img4.duitang.com/uploads/item/201407/23/20140723181040_F8vac.jpeg" alt=""/>
                         </CardMedia>
                     </Tab>
-                    <Tab label="关于我">
-                        <GridList cols={12}>
+                    <Tab label="关于我" >
+                        <GridList cols={12} style={{margin : '0'}}>
                             <GridTile cols={4} rows={2}>
                                 <div style={{
                                     display: 'flex',
@@ -77,11 +89,26 @@ module.exports = React.createClass({
                                 </MarkdownBox>
                             </GridTile>
                         </GridList>
-                        <div style={{width : '40%'}}>
-                        </div>
                     </Tab>
                 </Tabs>
-                
+                {this.state.posts.map(function(e){
+                    return (
+                        <PostCard 
+                            key={e._id}
+                            title={e.title}
+                            date={new Date(parseInt(e._id.valueOf().split(0,8),16)*1000).toString()}
+                            content={e.content}
+                        />
+                    );
+                })}
+                <FloatingActionButton 
+                    secondary={true}
+                    style={{
+                        position : 'fixed',
+                        bottom : '20px',
+                        right : '20px',
+                    }}
+                ><FontIcon className="material-icons">edit</FontIcon></FloatingActionButton>
             </div>
         )
     }
